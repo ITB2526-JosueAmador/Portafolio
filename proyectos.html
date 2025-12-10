@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portafolio – Todos los Proyectos</title>
+  <link rel="stylesheet" href="index.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* Título principal de la página - CORREGIDO */
+    .page-header {
+      text-align: center;
+      padding: 160px 2rem 4rem;   /* Espacio suficiente debajo del menú fijo */
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .page-header h1 {
+      font-size: 3.4rem;
+      color: #f8fafc;
+      margin-bottom: 1.2rem;
+      line-height: 1.2;
+    }
+
+    .page-header p {
+      font-size: 1.25rem;
+      color: #94a3b8;
+      max-width: 700px;
+      margin: 0 auto;
+      line-height: 1.7;
+    }
+
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+      gap: 3rem;
+      max-width: 1300px;
+      margin: 0 auto 8rem;
+      padding: 0 2rem;
+    }
+
+    .project-card {
+      background: rgba(30, 41, 59, 0.6);
+      border: 1px solid rgba(148, 163, 184, 0.1);
+      border-radius: 20px;
+      overflow: hidden;
+      transition: all 0.4s ease;
+      text-decoration: none;
+    }
+
+    .project-card:hover {
+      transform: translateY(-20px);
+      box-shadow: 0 35px 70px rgba(0, 0, 0, 0.6);
+      border-color: rgba(96, 165, 250, 0.4);
+    }
+
+    .project-card img {
+      width: 100%;
+      height: 280px;
+      object-fit: cover;
+    }
+
+    .card-content {
+      padding: 2rem;
+      color: #cbd5e1;
+    }
+
+    .card-content h3 {
+      font-size: 1.8rem;
+      color: #f8fafc;
+      margin-bottom: 1rem;
+    }
+
+    .card-content p {
+      margin-bottom: 1.5rem;
+      line-height: 1.7;
+    }
+
+    .card-link {
+      color: #60a5fa;
+      font-weight: 600;
+      text-decoration: none;
+      border-bottom: 2px solid transparent;
+      transition: all 0.3s;
+    }
+
+    .card-link:hover {
+      border-color: #60a5fa;
+    }
+
+    @media (max-width: 768px) {
+      .page-header {
+        padding: 140px 1.5rem 3rem;
+      }
+      .page-header h1 { font-size: 2.8rem; }
+      .projects-grid {
+        grid-template-columns: 1fr;
+        padding: 0 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER CON NAV (igual que siempre) -->
+  <header>
+    <nav>
+      <div class="logo">Portafolio</div>
+      <div class="nav-links">
+        <a href="index.html">Inicio</a>
+        <a href="proyectos.html">Proyectos</a>
+        <a href="formulario.html">Formulario</a>
+      </div>
+    </nav>
+  </header>
+
+  <!-- TÍTULO BIEN CENTRADO Y CON ESPACIO -->
+  <div class="page-header">
+    <h1>Todos mis Proyectos</h1>
+    <p>Selección de trabajos destacados en desarrollo full-stack, arquitectura digital, BIM y digital twins.</p>
+  </div>
+
+  <!-- GRID DE PROYECTOS -->
+  <main class="projects-grid">
+
+    <a href="proyecto1.html" class="project-card">
+      <img src="proyecto1-preview.jpeg" alt="Plataforma Banca">
+      <div class="card-content">
+        <h3>Plataforma de Gestión Empresarial</h3>
+        <p>Sistema interno de créditos y riesgos para Banco del Pacífico con scoring automático y firma electrónica.</p>
+        <span class="card-link">Ver proyecto →</span>
+      </div>
+    </a>
+
+    <a href="proyecto2.html" class="project-card">
+      <img src="proyecto2-preview.jpeg" alt="Torre Aurora">
+      <div class="card-content">
+        <h3>Torre Aurora – Gemelo Digital</h3>
+        <p>Edificio inteligente de 28 pisos con modelo 3D interactivo y +200 sensores IoT en tiempo real.</p>
+        <span class="card-link">Explorar modelo 3D →</span>
+      </div>
+    </a>
+
+  </main>
+
+  <!-- FOOTER HEREDADO -->
+  <footer>
+    <div class="footer-content">
+      <p>© 2025 ITB. Todos los derechos reservados.</p>
+      <p>Diseñado y desarrollado con precisión y elegancia</p>
+    </div>
+  </footer>
+
+</body>
+</html>

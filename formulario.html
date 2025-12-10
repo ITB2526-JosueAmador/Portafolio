@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contacto – Portafolio</title>
+  <link rel="stylesheet" href="index.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    .contact-container {
+      max-width: 800px;
+      margin: 140px auto 10rem;
+      padding: 0 2rem;
+    }
+
+    .contact-header {
+      text-align: center;
+      margin-bottom: 4rem;
+    }
+
+    .contact-header h1 {
+      font-size: 3.2rem;
+      color: #f8fafc;
+      margin-bottom: 1rem;
+    }
+
+    .contact-header p {
+      font-size: 1.2rem;
+      color: #94a3b8;
+    max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .contact-form {
+      background: rgba(30, 41, 59, 0.7);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(148, 163, 184, 0.15);
+      border-radius: 24px;
+      padding: 3.5rem 3rem;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.4);
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    label {
+      color: #e2e8f0;
+      font-weight: 500;
+      margin-bottom: 0.6rem;
+      font-size: 1rem;
+    }
+
+    input, select, textarea {
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid rgba(148, 163, 184, 0.2);
+      border-radius: 12px;
+      padding: 1rem 1.2rem;
+      color: #e2e8f0;
+      font-family: 'Inter', sans-serif;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: #60a5fa;
+      box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.2);
+      background: rgba(15, 23, 42, 0.9);
+    }
+
+    textarea {
+      min-height: 140px;
+      resize: vertical;
+    }
+
+    .full-width {
+      grid-column: 1 / -1;
+    }
+
+    button {
+      background: #1e40af;
+      color: white;
+      border: none;
+      padding: 1rem 2.5rem;
+      font-size: 1.1rem;
+      font-weight: 600;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: all 0.4s ease;
+      margin-top: 1rem;
+    }
+
+    button:hover {
+      background: #60a5fa;
+      transform: translateY(-3px);
+      box-shadow: 0 15px 30px rgba(96, 165, 250, 0.4);
+    }
+
+    .required {
+      color: #60a5fa;
+    }
+
+    @media (max-width: 768px) {
+      .contact-container { padding: 0 1.5rem; margin-top: 120px; }
+      .contact-header h1 { font-size: 2.6rem; }
+      .contact-form { padding: 2.5rem 2rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER HEREDADO -->
+  <header>
+    <nav>
+      <div class="logo">Portafolio</div>
+      <div class="nav-links">
+        <a href="index.html">Inicio</a>
+        <a href="proyectos.html">Proyectos</a>
+        <a href="formulario.html">Formulario</a>
+      </div>
+    </nav>
+  </header>
+
+  <!-- FORMULARIO DE CONTACTO -->
+  <div class="contact-container">
+    <div class="contact-header">
+      <h1>Contacto</h1>
+      <p>¿Tienes un proyecto en mente? Hablemos. Respondo en menos de 24 horas.</p>
+    </div>
+
+    <form class="contact-form" action="https://formspree.io/f/xxxxxxx" method="POST">
+      <!-- CAMBIA AQUÍ TU ID DE FORMSPREE (gratis en 2 minutos) -->
+      <!-- Ve a https://formspree.io y crea un formulario → te dará un enlace como este -->
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="name">Nombre completo <span class="required">*</span></label>
+          <input type="text" id="name" name="name" required placeholder="Juan Pérez">
+        </div>
+
+        <div class="form-group">
+          <label for="email">Email <span class="required">*</span></label>
+          <input type="email" id="email" name="email" required placeholder="juan@ejemplo.com">
+        </div>
+
+        <div class="form-group">
+          <label for="phone">Teléfono <span class="required">*</span></label>
+          <input type="tel" id="phone" name="phone" required placeholder="+593 99 999 9999">
+        </div>
+
+        <div class="form-group">
+          <label for="subject">Asunto <span class="required">*</span></label>
+          <select id="subject" name="subject" required>
+            <option value="" disabled selected>Selecciona una opción</option>
+            <option value="proyecto-web">Proyecto Web / App</option>
+            <option value="digital-twin">Gemelo Digital / BIM</option>
+            <option value="consultoria">Consultoría Técnica</option>
+            <option value="colaboracion">Colaboración / Empleo</option>
+            <option value="otro">Otro</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group full-width">
+        <label for="message">Mensaje <small>(opcional, mínimo 10 caracteres)</small></label>
+        <textarea
+          id="message"
+          name="message"
+          placeholder="Cuéntame sobre tu proyecto..."
+          minlength="10"></textarea>
+      </div>
+
+      <button type="submit">Enviar mensaje</button>
+    </form>
+  </div>
+
+  <!-- FOOTER HEREDADO -->
+  <footer>
+    <div class="footer-content">
+      <p>© 2025 ITB. Todos los derechos reservados.</p>
+      <p>Diseñado y desarrollado con precisión y elegancia</p>
+    </div>
+  </footer>
+
+</body>
+</html>

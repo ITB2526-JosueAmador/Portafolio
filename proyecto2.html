@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Proyecto 2 – Portafolio</title>
+  <link rel="stylesheet" href="index.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Model Viewer oficial de Google -->
+  <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+
+  <style>
+    .project-container {
+      display: flex;
+      gap: 4rem;
+      margin-top: 140px;
+      max-width: 1400px;
+      margin-left: auto;
+      margin-right: auto;
+      padding: 0 2rem;
+      flex-wrap: wrap;
+      align-items: flex-start;
+    }
+
+    .project-info { flex: 3; min-width: 320px; }
+    .project-info h1 { font-size: 3rem; margin-bottom: 2rem; color: #f8fafc; }
+
+    .project-info .meta {
+      display: grid;
+      grid-template-columns: max-content 1fr;
+      gap: 0.8rem 2rem;
+      margin: 2.5rem 0;
+      color: #94a3b8;
+      font-size: 1.05rem;
+    }
+    .project-info .meta strong { color: #e2e8f0; }
+
+    .model-3d {
+      flex: 2;
+      min-width: 300px;
+      position: sticky;
+      top: 120px;
+      align-self: flex-start;
+    }
+
+    model-viewer {
+      width: 100%;
+      height: 650px;
+      background: #0f172a;
+      border-radius: 16px;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7);
+      --progress-bar-color: #60a5fa;
+    }
+
+    /* Ocultar todos los controles y textos por defecto del visor */
+    model-viewer::part(default-progress-bar) { display: none; }
+    model-viewer::part(default-ar-button) { display: none; }
+
+    .model-controls {
+      text-align: center;
+      margin-top: 1rem;
+      color: #64748b;
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 768px) {
+      .project-container { flex-direction: column; }
+      .model-3d { position: static; order: -1; }
+      model-viewer { height: 450px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER HEREDADO -->
+  <header>
+    <nav>
+      <div class="logo">Portafolio</div>
+      <div class="nav-links">
+        <a href="index.html">Inicio</a>
+        <a href="proyectos.html">Proyectos</a>
+        <a href="formulario.html">Formulario</a>
+      </div>
+    </nav>
+  </header>
+
+  <div class="project-container">
+
+    <section class="project-info">
+      <h1>Edificio Inteligente – Torre Aurora</h1>
+      <p>
+        Gemelo digital interactivo de un edificio corporativo de 28 pisos con datos en tiempo real de sensores IoT.
+      </p>
+
+      <h2 style="margin-top: 3rem; color: #60a5fa;">Características principales</h2>
+      <p>
+        Modelo 3D de alta fidelidad conectado a más de 200 sensores. Permite inspeccionar planta por planta,
+        visualizar consumo energético, ocupación y mantenimiento predictivo.
+      </p>
+
+      <div class="meta">
+        <strong>Cliente</strong>          <span>Aurora Properties</span>
+        <strong>Rol</strong>              <span>Lead Developer BIM + Full Stack</span>
+        <strong>Año</strong>              <span>2025</span>
+        <strong>Tecnologías</strong>      <span>React Three Fiber, Three.js, MQTT, InfluxDB</span>
+      </div>
+
+      <h2 style="margin-top: 3rem; color: #60a5fa;">Resultados</h2>
+      <ul style="color:#cbd5e1; line-height:2; margin-left:1.5rem;">
+        <li>−34 % consumo energético</li>
+        <li>Respuesta a incidencias: 12 minutos</li>
+        <li>Premio Nacional de Arquitectura Sostenible 2025</li>
+      </ul>
+    </section>
+
+    <!-- MODELO 3D 100% INTERACTIVO Y LIMPIO -->
+    <aside class="model-3d">
+      <model-viewer
+        src="proyecto2.glb"
+        alt="Torre Aurora - Modelo 3D interactivo"
+        camera-controls
+        touch-action="pan-y"
+        auto-rotate
+        rotation-per-second="15deg"
+        interaction-prompt="none"
+        shadow-intensity="1.5"
+        exposure="1"
+        environment-image="neutral"
+        skybox-image=""
+        loading="eager">
+
+        <!-- Estas líneas ocultan cualquier texto o botón interno -->
+        <button slot="ar-button" style="display:none"></button>
+      </model-viewer>
+
+      <div class="model-controls">
+        Gira • Zoom • Mueve la cámara<br>
+        <small>Haz clic y arrastra para explorar</small>
+      </div>
+    </aside>
+
+  </div>
+
+  <!-- FOOTER HEREDADO -->
+  <footer>
+    <div class="footer-content">
+      <p>© 2025 ITB. Todos los derechos reservados.</p>
+      <p>Diseñado y desarrollado con precisión y elegancia</p>
+    </div>
+  </footer>
+
+</body>
+</html>

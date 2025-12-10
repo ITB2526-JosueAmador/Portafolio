@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Proyecto 1 – Portafolio</title>
+  <link rel="stylesheet" href="index.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* Estilos específicos solo para las páginas de proyecto */
+    .project-container {
+      display: flex;
+      gap: 3rem;
+      margin-top: 140px;
+      max-width: 1400px;
+      margin-left: auto;
+      margin-right: auto;
+      padding: 0 2rem;
+      flex-wrap: wrap;
+    }
+
+    .project-info {
+      flex: 3;
+      min-width: 300px;
+    }
+
+    .project-info h1 {
+      font-size: 3rem;
+      margin-bottom: 2rem;
+      color: #f8fafc;
+    }
+
+    .project-info .meta {
+      display: grid;
+      grid-template-columns: max-content 1fr;
+      gap: 0.8rem 1.5rem;
+      margin: 2rem 0;
+      color: #94a3b8;
+      font-size: 1rem;
+    }
+
+    .project-info .meta strong {
+      color: #e2e8f0;
+    }
+
+    .pdf-viewer {
+      flex: 1;
+      min-width: 300px;
+      position: sticky;
+      top: 120px;
+      align-self: flex-start;
+    }
+
+    .pdf-viewer iframe {
+      width: 100%;
+      height: 800px;
+      border: none;
+      border-radius: 12px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+      background: #1e293b;
+    }
+
+    @media (max-width: 992px) {
+      .project-container {
+        flex-direction: column;
+      }
+      .pdf-viewer {
+        position: static;
+      }
+      .pdf-viewer iframe {
+        height: 600px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER HEREDADO exactamente igual que index.html -->
+  <header>
+    <nav>
+      <div class="logo">Portafolio</div>
+      <div class="nav-links">
+        <a href="index.html">Inicio</a>
+        <a href="proyectos.html">Proyectos</a>
+        <a href="formulario.html">Formulario</a>
+      </div>
+    </nav>
+  </header>
+
+  <!-- CONTENIDO PRINCIPAL DEL PROYECTO -->
+  <div class="project-container">
+
+    <!-- COLUMNA IZQUIERDA: Información extensa -->
+    <section class="project-info">
+      <h1>Plataforma de Gestión Empresarial – Banco del Pacífico</h1>
+
+      <p>
+        Desarrollo completo de una plataforma interna de gestión de créditos y riesgos para una de las entidades financieras más grandes de Ecuador.
+        Incluye dashboard en tiempo real, motor de scoring automatizado y módulo de firma electrónica avanzada.
+      </p>
+
+      <h2 style="margin-top: 3rem; color: #60a5fa;">Detalles del proyecto</h2>
+      <p>
+        La solución reemplazó un sistema legado de más de 15 años, reduciendo el tiempo de procesamiento de solicitudes de crédito en un 82% y eliminando errores humanos gracias a la automatización inteligente.
+      </p>
+
+      <div class="meta">
+        <strong>Cliente</strong>        <span>Banco del Pacífico</span>
+        <strong>Rol</strong>            <span>Arquitecto Full Stack & Team Lead</span>
+        <strong>Año</strong>            <span>2024 – 2025</span>
+        <strong>Tecnologías</strong>    <span>React + TypeScript, Node.js, NestJS, PostgreSQL, Docker, Kubernetes, AWS</span>
+        <strong>Equipo</strong>         <span>12 desarrolladores + 3 diseñadores UX/UI</span>
+        <strong>Duración</strong>      <span>11 meses</span>
+      </div>
+
+      <h2 style="margin-top: 3rem; color: #60a5fa;">Resultados alcanzados</h2>
+      <ul style="color: #cbd5e1; line-height: 2; margin-left: 1.5rem;">
+        <li>Reducción del 82 % en tiempos de aprobación de crédito</li>
+        <li>99,97 % de precisión en scoring automático</li>
+        <li>+45 000 usuarios activos mensuales</li>
+        <li>Certificación ISO 27001 obtenida gracias a la arquitectura de seguridad implementada</li>
+      </ul>
+    </section>
+
+    <!-- COLUMNA DERECHA: PDF interactivo -->
+    <aside class="pdf-viewer">
+      <iframe
+        src="proyecto1.pdf"
+        <!-- Cambia esta ruta por tu PDF real -->
+        title="Documentación Proyecto 1"
+        allowfullscreen>
+      </iframe>
+      <p style="text-align:center; margin-top: 1rem; color: #64748b; font-size: 0.9rem;">
+        Si el PDF no carga, <a href="proyecto1.pdf" style="color:#60a5fa;">descárgal
