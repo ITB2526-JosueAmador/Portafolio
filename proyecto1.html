@@ -3,9 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Proyecto 1 – Portafolio</title>
+  <title>Trabajo de Investigación</title>
   <link rel="stylesheet" href="index.css">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Tone.js para el sintetizador FM -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+  <!-- Midi para cargar archivos MIDI -->
+  <script src="https://cdn.jsdelivr.net/npm/@tonejs/midi@2.0.28/build/Midi.js"></script>
+
   <style>
     /* Estilos específicos solo para las páginas de proyecto */
     .project-container {
@@ -51,13 +57,292 @@
       align-self: flex-start;
     }
 
+    .pdf-viewer-container {
+      background: linear-gradient(135deg, rgba(15, 23, 42, 0.6) 0%, rgba(30, 41, 59, 0.5) 100%);
+      border: 1px solid rgba(59, 130, 246, 0.2);
+      border-radius: 20px;
+      padding: 1.5rem;
+      box-shadow:
+        0 4px 24px rgba(0, 0, 0, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.05);
+      transition: all 0.4s ease;
+    }
+
+    .pdf-viewer-container:hover {
+      border-color: rgba(96, 165, 250, 0.4);
+      box-shadow:
+        0 20px 60px rgba(59, 130, 246, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    }
+
     .pdf-viewer iframe {
       width: 100%;
       height: 800px;
       border: none;
       border-radius: 12px;
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
-      background: #1e293b;
+      background: #0a0f1e;
+      box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.4);
+    }
+
+    .pdf-label {
+      text-align: center;
+      margin-bottom: 1rem;
+      color: #60a5fa;
+      font-weight: 600;
+      font-size: 0.95rem;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    /* Estilos del sintetizador FM */
+    .synth-section {
+      max-width: 1100px;
+      margin: 4rem auto 3rem auto;
+      padding: 4rem 3rem;
+    }
+
+    .synth-container {
+      background: linear-gradient(135deg, rgba(15, 23, 42, 0.8) 0%, rgba(30, 41, 59, 0.7) 100%);
+      border: 1px solid rgba(59, 130, 246, 0.2);
+      border-radius: 20px;
+      padding: 3rem;
+      margin-top: 2rem;
+      box-shadow:
+        0 4px 24px rgba(0, 0, 0, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    }
+
+    .keyboard {
+      display: flex;
+      gap: 4px;
+      justify-content: center;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .key {
+      width: 60px;
+      height: 200px;
+      background: linear-gradient(180deg, #e2e8f0 0%, #cbd5e1 100%);
+      border: 2px solid #475569;
+      border-radius: 0 0 8px 8px;
+      cursor: pointer;
+      transition: all 0.1s ease;
+      position: relative;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    }
+
+    .key:hover {
+      background: linear-gradient(180deg, #cbd5e1 0%, #94a3b8 100%);
+      transform: translateY(-2px);
+    }
+
+    .key:active, .key.active {
+      background: linear-gradient(180deg, #60a5fa 0%, #3b82f6 100%);
+      transform: translateY(4px);
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+    }
+
+    .key-label {
+      position: absolute;
+      bottom: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 0.75rem;
+      color: #0f172a;
+      font-weight: 600;
+    }
+
+    .controls {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 2rem;
+      margin-top: 2rem;
+    }
+
+    .control-group {
+      background: rgba(15, 23, 42, 0.5);
+      padding: 1.5rem;
+      border-radius: 12px;
+      border: 1px solid rgba(59, 130, 246, 0.15);
+    }
+
+    .control-group label {
+      display: block;
+      color: #60a5fa;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .control-group input[type="range"] {
+      width: 100%;
+      height: 6px;
+      background: linear-gradient(90deg, rgba(59, 130, 246, 0.2), rgba(167, 139, 250, 0.2));
+      border-radius: 5px;
+      outline: none;
+      -webkit-appearance: none;
+    }
+
+    .control-group input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 18px;
+      height: 18px;
+      background: linear-gradient(135deg, #60a5fa, #a78bfa);
+      cursor: pointer;
+      border-radius: 50%;
+      box-shadow: 0 0 10px rgba(96, 165, 250, 0.5);
+    }
+
+    .control-group input[type="range"]::-moz-range-thumb {
+      width: 18px;
+      height: 18px;
+      background: linear-gradient(135deg, #60a5fa, #a78bfa);
+      cursor: pointer;
+      border-radius: 50%;
+      border: none;
+      box-shadow: 0 0 10px rgba(96, 165, 250, 0.5);
+    }
+
+    .control-value {
+      color: #cbd5e1;
+      font-size: 0.85rem;
+      margin-top: 0.25rem;
+      text-align: right;
+    }
+
+    .synth-info {
+      text-align: center;
+      color: #64748b;
+      font-size: 0.9rem;
+      margin-top: 2rem;
+      line-height: 1.6;
+    }
+
+    /* Estilos para el reproductor MIDI */
+    .midi-player {
+      background: rgba(15, 23, 42, 0.8);
+      padding: 2.5rem;
+      border-radius: 16px;
+      border: 2px solid rgba(59, 130, 246, 0.3);
+      margin-top: 2rem;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    }
+
+    .midi-upload {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.5rem;
+    }
+
+    .upload-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem 2.5rem;
+      background: linear-gradient(135deg, #60a5fa 0%, #a78bfa 100%);
+      color: #0a0f1e;
+      border: none;
+      border-radius: 50px;
+      font-weight: 700;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      letter-spacing: 0.5px;
+      box-shadow:
+        0 8px 25px rgba(96, 165, 250, 0.4),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    }
+
+    .upload-btn:hover {
+      background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+      transform: translateY(-3px) scale(1.05);
+      box-shadow:
+        0 15px 40px rgba(96, 165, 250, 0.6),
+        0 0 30px rgba(96, 165, 250, 0.4);
+    }
+
+    .upload-btn:active {
+      transform: translateY(-1px) scale(1.02);
+    }
+
+    .midi-controls {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      align-items: center;
+      margin-top: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .midi-btn {
+      padding: 0.8rem 1.8rem;
+      background: linear-gradient(135deg, rgba(59, 130, 246, 0.3) 0%, rgba(167, 139, 250, 0.3) 100%);
+      color: #e2e8f0;
+      border: 2px solid rgba(96, 165, 250, 0.5);
+      border-radius: 30px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-weight: 700;
+      font-size: 1rem;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    .midi-btn:hover:not(:disabled) {
+      background: linear-gradient(135deg, rgba(59, 130, 246, 0.6) 0%, rgba(167, 139, 250, 0.6) 100%);
+      border-color: #60a5fa;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(96, 165, 250, 0.4);
+    }
+
+    .midi-btn:active:not(:disabled) {
+      transform: translateY(0);
+    }
+
+    .midi-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      filter: grayscale(0.5);
+    }
+
+    .midi-info {
+      margin-top: 1rem;
+      padding: 1rem;
+      background: rgba(96, 165, 250, 0.1);
+      border-radius: 8px;
+      color: #cbd5e1;
+      font-size: 1rem;
+      text-align: center;
+      border: 1px solid rgba(96, 165, 250, 0.2);
+    }
+
+    .progress-container {
+      flex: 1;
+      min-width: 250px;
+      max-width: 400px;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 8px;
+      background: rgba(15, 23, 42, 0.8);
+      border: 1px solid rgba(96, 165, 250, 0.3);
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #60a5fa 0%, #a78bfa 100%);
+      width: 0%;
+      transition: width 0.1s linear;
+      box-shadow: 0 0 15px rgba(96, 165, 250, 0.8);
+      border-radius: 10px;
     }
 
     @media (max-width: 992px) {
@@ -70,6 +355,13 @@
       .pdf-viewer iframe {
         height: 600px;
       }
+      .key {
+        width: 50px;
+        height: 160px;
+      }
+      .controls {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
 </head>
@@ -78,7 +370,7 @@
   <!-- HEADER HEREDADO exactamente igual que index.html -->
   <header>
     <nav>
-      <div class="logo">Portafolio</div>
+      <div class="logo">Josué Amador</div>
       <div class="nav-links">
         <a href="index.html">Inicio</a>
         <a href="proyectos.html">Proyectos</a>
@@ -92,25 +384,24 @@
 
     <!-- COLUMNA IZQUIERDA: Información extensa -->
     <section class="project-info">
-      <h1>Plataforma de Gestión Empresarial – Banco del Pacífico</h1>
+      <h1>Aproximación al funcionamiento de las estaciones digitales de audio (DAW)</h1>
 
       <p>
-        Desarrollo completo de una plataforma interna de gestión de créditos y riesgos para una de las entidades financieras más grandes de Ecuador.
-        Incluye dashboard en tiempo real, motor de scoring automatizado y módulo de firma electrónica avanzada.
+        Trabajo de investigación con el objetivo de introducirnos al concepto y operación de una Digital Audio Workstation (DAW), software esencial para la producción musical moderna. Incluye grabación multipista, edición no destructiva, procesamiento con plugins y mezcla/masterización en un entorno digital integrado.
       </p>
 
       <h2 style="margin-top: 3rem; color: #60a5fa;">Detalles del proyecto</h2>
       <p>
-        La solución reemplazó un sistema legado de más de 15 años, reduciendo el tiempo de procesamiento de solicitudes de crédito en un 82% y eliminando errores humanos gracias a la automatización inteligente.
+        Es un proyecto que nos explica la evolución del DAW desde los estudios analógicos tradicionales hasta tenerlo en tu ordenador (incluso en tu móvil), permitiendo a productores y músicos independientes crear música profesional en home studios, reduciendo costos de equipamiento en más del 90% y acelerando el flujo creativo mediante herramientas intuitivas y automatización.
       </p>
 
       <div class="meta">
-        <strong>Cliente</strong>        <span>Banco del Pacífico</span>
-        <strong>Rol</strong>            <span>Arquitecto Full Stack & Team Lead</span>
-        <strong>Año</strong>            <span>2024 – 2025</span>
-        <strong>Tecnologías</strong>    <span>React + TypeScript, Node.js, NestJS, PostgreSQL, Docker, Kubernetes, AWS</span>
-        <strong>Equipo</strong>         <span>12 desarrolladores + 3 diseñadores UX/UI</span>
-        <strong>Duración</strong>      <span>11 meses</span>
+        <strong>Objetivo</strong>           <span>Facilitar y dar accesibilidad a la producción musical y todos sus procesos</span>
+        <strong>Rol</strong>                <span>Arquitecto Full Stack & Team Lead</span>
+        <strong>Año</strong>                <span>2024 – 2025</span>
+        <strong>Programas famosos</strong>  <span>FL Studio, Ableton, Cubase, Pro Tools y Audio Tools</span>
+        <strong>Equipo</strong>             <span>12 desarrolladores + 3 diseñadores UX/UI</span>
+        <strong>Duración</strong>           <span>11 meses</span>
       </div>
 
       <h2 style="margin-top: 3rem; color: #60a5fa;">Resultados alcanzados</h2>
@@ -122,13 +413,401 @@
       </ul>
     </section>
 
-    <!-- COLUMNA DERECHA: PDF interactivo -->
+    <!-- COLUMNA DERECHA: PDF interactivo mejorado -->
     <aside class="pdf-viewer">
-      <iframe
-        src="proyecto1.pdf"
-        <!-- Cambia esta ruta por tu PDF real -->
-        title="Documentación Proyecto 1"
-        allowfullscreen>
-      </iframe>
+      <div class="pdf-viewer-container">
+        <div class="pdf-label">Documentación del Proyecto</div>
+        <iframe
+          src="proyecto1.pdf"
+          title="Documentación Proyecto 1"
+          allowfullscreen>
+        </iframe>
+      </div>
       <p style="text-align:center; margin-top: 1rem; color: #64748b; font-size: 0.9rem;">
-        Si el PDF no carga, <a href="proyecto1.pdf" style="color:#60a5fa;">descárgal
+        Si el PDF no carga, <a href="proyecto1.pdf" style="color:#60a5fa; text-decoration: none;">descárgalo aquí</a>
+      </p>
+    </aside>
+
+  </div>
+
+  <!-- SECCIÓN DEL SINTETIZADOR FM -->
+  <section class="synth-section">
+    <h2 style="text-align: center; font-size: 2.2rem; background: linear-gradient(135deg, #60a5fa 0%, #a78bfa 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 1.5rem;">Sintetizador FM Interactivo</h2>
+    <p style="text-align: center; max-width: 800px; margin: 0 auto; font-size: 1.15rem; color: #cbd5e1; line-height: 1.8;">
+      Experimenta con síntesis de frecuencia modulada (FM) en tiempo real.
+      Este sintetizador de código abierto te permite crear sonidos únicos manipulando
+      moduladores y portadoras para explorar texturas sonoras complejas.
+    </p>
+
+    <div class="synth-container">
+      <!-- Teclado virtual -->
+      <div class="keyboard" id="keyboard">
+        <div class="key" data-note="C4"><span class="key-label">C</span></div>
+        <div class="key" data-note="D4"><span class="key-label">D</span></div>
+        <div class="key" data-note="E4"><span class="key-label">E</span></div>
+        <div class="key" data-note="F4"><span class="key-label">F</span></div>
+        <div class="key" data-note="G4"><span class="key-label">G</span></div>
+        <div class="key" data-note="A4"><span class="key-label">A</span></div>
+        <div class="key" data-note="B4"><span class="key-label">B</span></div>
+        <div class="key" data-note="C5"><span class="key-label">C5</span></div>
+      </div>
+
+      <!-- Controles del sintetizador -->
+      <div class="controls">
+        <div class="control-group">
+          <label for="harmonicity">Harmonicity (Ratio FM)</label>
+          <input type="range" id="harmonicity" min="0.5" max="4" step="0.1" value="3">
+          <div class="control-value" id="harmonicity-value">3.0</div>
+        </div>
+
+        <div class="control-group">
+          <label for="modulationIndex">Modulation Index</label>
+          <input type="range" id="modulationIndex" min="1" max="100" step="1" value="10">
+          <div class="control-value" id="modulationIndex-value">10</div>
+        </div>
+
+        <div class="control-group">
+          <label for="attack">Attack</label>
+          <input type="range" id="attack" min="0.001" max="2" step="0.01" value="0.01">
+          <div class="control-value" id="attack-value">0.01s</div>
+        </div>
+
+        <div class="control-group">
+          <label for="decay">Decay</label>
+          <input type="range" id="decay" min="0.001" max="2" step="0.01" value="0.2">
+          <div class="control-value" id="decay-value">0.20s</div>
+        </div>
+
+        <div class="control-group">
+          <label for="sustain">Sustain</label>
+          <input type="range" id="sustain" min="0" max="1" step="0.01" value="0.5">
+          <div class="control-value" id="sustain-value">0.5</div>
+        </div>
+
+        <div class="control-group">
+          <label for="release">Release</label>
+          <input type="range" id="release" min="0.01" max="4" step="0.01" value="1">
+          <div class="control-value" id="release-value">1.00s</div>
+        </div>
+      </div>
+
+      <div class="synth-info">
+        🎹 Haz clic en las teclas para tocar • Construido con Tone.js (código abierto)<br>
+        <small>La síntesis FM permite crear sonidos complejos modulando la frecuencia de una onda portadora con otra onda moduladora</small>
+      </div>
+
+      <!-- Reproductor MIDI -->
+      <div class="midi-player">
+        <h3 style="text-align: center; color: #60a5fa; margin-bottom: 1.5rem; font-size: 1.3rem;">
+          🎼 Reproductor MIDI
+        </h3>
+
+        <div class="midi-upload">
+          <label for="midi-file" class="upload-btn">
+            📁 Cargar Archivo MIDI
+          </label>
+          <input type="file" id="midi-file" accept=".mid,.midi" style="display: none;">
+
+          <div class="midi-info" id="midi-info">
+            No hay archivo cargado - Selecciona un archivo .mid o .midi
+          </div>
+        </div>
+
+        <div class="midi-controls" id="midi-controls">
+          <button class="midi-btn" id="play-btn" disabled>▶ Play</button>
+          <button class="midi-btn" id="pause-btn" disabled>⏸ Pause</button>
+          <button class="midi-btn" id="stop-btn" disabled>⏹ Stop</button>
+
+          <div class="progress-container">
+            <div class="progress-bar">
+              <div class="progress-fill" id="progress-fill"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER HEREDADO -->
+  <footer>
+    <div class="footer-content">
+      <p>© 2025 ITB. Todos los derechos reservados.</p>
+      <p>Diseñado y desarrollado con precisión y elegancia</p>
+    </div>
+  </footer>
+
+  <script>
+    // Inicializar el sintetizador FM
+    const synth = new Tone.FMSynth({
+      harmonicity: 3,
+      modulationIndex: 10,
+      envelope: {
+        attack: 0.01,
+        decay: 0.2,
+        sustain: 0.5,
+        release: 1
+      },
+      modulation: {
+        type: "sine"
+      },
+      modulationEnvelope: {
+        attack: 0.5,
+        decay: 0,
+        sustain: 1,
+        release: 0.5
+      }
+    }).toDestination();
+
+    // Variables para el reproductor MIDI
+    let midiData = null;
+    let midiPart = null;
+    let currentNotes = [];
+    let startTime = 0;
+    let duration = 0;
+    let progressInterval = null;
+
+    // Configurar el teclado
+    const keys = document.querySelectorAll('.key');
+    keys.forEach(key => {
+      key.addEventListener('mousedown', () => {
+        const note = key.getAttribute('data-note');
+        synth.triggerAttackRelease(note, '8n');
+        key.classList.add('active');
+      });
+
+      key.addEventListener('mouseup', () => {
+        key.classList.remove('active');
+      });
+
+      key.addEventListener('mouseleave', () => {
+        key.classList.remove('active');
+      });
+    });
+
+    // Controles del sintetizador
+    const harmonicitySlider = document.getElementById('harmonicity');
+    const harmonicityValue = document.getElementById('harmonicity-value');
+    harmonicitySlider.addEventListener('input', (e) => {
+      synth.harmonicity.value = parseFloat(e.target.value);
+      harmonicityValue.textContent = parseFloat(e.target.value).toFixed(1);
+    });
+
+    const modulationIndexSlider = document.getElementById('modulationIndex');
+    const modulationIndexValue = document.getElementById('modulationIndex-value');
+    modulationIndexSlider.addEventListener('input', (e) => {
+      synth.modulationIndex.value = parseFloat(e.target.value);
+      modulationIndexValue.textContent = e.target.value;
+    });
+
+    const attackSlider = document.getElementById('attack');
+    const attackValue = document.getElementById('attack-value');
+    attackSlider.addEventListener('input', (e) => {
+      synth.envelope.attack = parseFloat(e.target.value);
+      attackValue.textContent = parseFloat(e.target.value).toFixed(2) + 's';
+    });
+
+    const decaySlider = document.getElementById('decay');
+    const decayValue = document.getElementById('decay-value');
+    decaySlider.addEventListener('input', (e) => {
+      synth.envelope.decay = parseFloat(e.target.value);
+      decayValue.textContent = parseFloat(e.target.value).toFixed(2) + 's';
+    });
+
+    const sustainSlider = document.getElementById('sustain');
+    const sustainValue = document.getElementById('sustain-value');
+    sustainSlider.addEventListener('input', (e) => {
+      synth.envelope.sustain = parseFloat(e.target.value);
+      sustainValue.textContent = parseFloat(e.target.value).toFixed(2);
+    });
+
+    const releaseSlider = document.getElementById('release');
+    const releaseValue = document.getElementById('release-value');
+    releaseSlider.addEventListener('input', (e) => {
+      synth.envelope.release = parseFloat(e.target.value);
+      releaseValue.textContent = parseFloat(e.target.value).toFixed(2) + 's';
+    });
+
+    // Soporte para teclado físico
+    const keyMap = {
+      'a': 'C4', 's': 'D4', 'd': 'E4', 'f': 'F4',
+      'g': 'G4', 'h': 'A4', 'j': 'B4', 'k': 'C5'
+    };
+
+    document.addEventListener('keydown', (e) => {
+      const note = keyMap[e.key.toLowerCase()];
+      if (note && !e.repeat) {
+        synth.triggerAttackRelease(note, '8n');
+        const keyElement = document.querySelector(`[data-note="${note}"]`);
+        if (keyElement) keyElement.classList.add('active');
+      }
+    });
+
+    document.addEventListener('keyup', (e) => {
+      const note = keyMap[e.key.toLowerCase()];
+      if (note) {
+        const keyElement = document.querySelector(`[data-note="${note}"]`);
+        if (keyElement) keyElement.classList.remove('active');
+      }
+    });
+
+    // ===== REPRODUCTOR MIDI =====
+    const midiFileInput = document.getElementById('midi-file');
+    const midiInfo = document.getElementById('midi-info');
+    const midiControls = document.getElementById('midi-controls');
+    const playBtn = document.getElementById('play-btn');
+    const pauseBtn = document.getElementById('pause-btn');
+    const stopBtn = document.getElementById('stop-btn');
+    const progressFill = document.getElementById('progress-fill');
+
+    // Cargar archivo MIDI
+    midiFileInput.addEventListener('change', async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      try {
+        const arrayBuffer = await file.arrayBuffer();
+        midiData = new Midi(arrayBuffer);
+
+        // Mostrar información del archivo
+        const trackCount = midiData.tracks.length;
+        const noteCount = midiData.tracks.reduce((sum, track) => sum + track.notes.length, 0);
+        duration = midiData.duration;
+
+        midiInfo.innerHTML = `
+          <strong style="color: #60a5fa;">${file.name}</strong><br>
+          ${trackCount} pistas • ${noteCount} notas • ${duration.toFixed(1)}s
+        `;
+
+        // Mostrar y habilitar controles
+        midiControls.style.display = 'flex';
+        playBtn.disabled = false;
+        stopBtn.disabled = false;
+        setupMidiPlayback();
+      } catch (error) {
+        console.error('Error cargando MIDI:', error);
+        midiInfo.innerHTML = '<span style="color: #ef4444;">Error al cargar el archivo</span>';
+      }
+    });
+
+    function setupMidiPlayback() {
+      // Limpiar reproducción anterior
+      if (midiPart) {
+        midiPart.dispose();
+        Tone.Transport.cancel();
+      }
+
+      // Crear un PolySynth para manejar múltiples notas
+      const polySynth = new Tone.PolySynth(Tone.FMSynth, {
+        harmonicity: synth.harmonicity.value,
+        modulationIndex: synth.modulationIndex.value,
+        envelope: {
+          attack: synth.envelope.attack,
+          decay: synth.envelope.decay,
+          sustain: synth.envelope.sustain,
+          release: synth.envelope.release
+        }
+      }).toDestination();
+
+      // Sincronizar con los controles del sintetizador
+      [harmonicitySlider, modulationIndexSlider, attackSlider, decaySlider, sustainSlider, releaseSlider].forEach(slider => {
+        slider.addEventListener('input', () => {
+          polySynth.set({
+            harmonicity: parseFloat(harmonicitySlider.value),
+            modulationIndex: parseFloat(modulationIndexSlider.value),
+            envelope: {
+              attack: parseFloat(attackSlider.value),
+              decay: parseFloat(decaySlider.value),
+              sustain: parseFloat(sustainSlider.value),
+              release: parseFloat(releaseSlider.value)
+            }
+          });
+        });
+      });
+
+      // Convertir notas MIDI a eventos de Tone.js
+      const notes = [];
+      midiData.tracks.forEach(track => {
+        track.notes.forEach(note => {
+          notes.push({
+            time: note.time,
+            note: note.name,
+            duration: note.duration,
+            velocity: note.velocity
+          });
+        });
+      });
+
+      // Crear Part para reproducir las notas
+      midiPart = new Tone.Part((time, note) => {
+        polySynth.triggerAttackRelease(note.note, note.duration, time, note.velocity);
+
+        // Animar las teclas visuales si coinciden
+        const keyElement = document.querySelector(`[data-note="${note.note}"]`);
+        if (keyElement) {
+          Tone.Draw.schedule(() => {
+            keyElement.classList.add('active');
+            setTimeout(() => keyElement.classList.remove('active'), note.duration * 1000);
+          }, time);
+        }
+      }, notes);
+
+      midiPart.loop = false;
+    }
+
+    // Controles de reproducción
+    playBtn.addEventListener('click', async () => {
+      await Tone.start();
+      if (Tone.Transport.state === 'paused') {
+        Tone.Transport.start();
+      } else {
+        Tone.Transport.start();
+        midiPart.start(0);
+        startTime = Tone.now();
+        startProgressTracking();
+      }
+      playBtn.disabled = true;
+      pauseBtn.disabled = false;
+    });
+
+    pauseBtn.addEventListener('click', () => {
+      Tone.Transport.pause();
+      stopProgressTracking();
+      playBtn.disabled = false;
+      pauseBtn.disabled = true;
+    });
+
+    stopBtn.addEventListener('click', () => {
+      Tone.Transport.stop();
+      Tone.Transport.position = 0;
+      midiPart.stop();
+      stopProgressTracking();
+      progressFill.style.width = '0%';
+      playBtn.disabled = false;
+      pauseBtn.disabled = true;
+    });
+
+    // Tracking de progreso
+    function startProgressTracking() {
+      progressInterval = setInterval(() => {
+        const elapsed = Tone.Transport.seconds;
+        const progress = (elapsed / duration) * 100;
+        progressFill.style.width = Math.min(progress, 100) + '%';
+
+        if (progress >= 100) {
+          stopProgressTracking();
+          playBtn.disabled = false;
+          pauseBtn.disabled = true;
+        }
+      }, 100);
+    }
+
+    function stopProgressTracking() {
+      if (progressInterval) {
+        clearInterval(progressInterval);
+        progressInterval = null;
+      }
+    }
+  </script>
+
+</body>
+</html>
