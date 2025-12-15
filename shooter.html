@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Aimlab</title>
+    <style>
+        body { margin: 0; overflow: hidden; }
+        #crosshair {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 20px;
+            height: 20px;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 20px;
+            text-align: center;
+            pointer-events: none;
+        }
+        canvas { cursor: none; }
+    </style>
+</head>
+<body>
+    <div id="crosshair">+</div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+    <script src="https://unpkg.com/three@0.134.0/examples/js/loaders/GLTFLoader.js"></script>
+    <script>
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+const renderer = new THREE.WebGLRenderer();
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setClearColor(0x000000);
+document.body.appendChild(renderer.domElement);
+
+// Habilitar sombras (opcional, para que el muzzle flash proyecte sombras)
+renderer.shadowMap.enabled = true;
+
+camera.position.z = 5;
+camera.position.y = 5;
+scene.add(camera);
+
+const loadersky = new THREE.CubeTextureLoader();
+const skybox = loadersky.load([
+    'skybox_px.png', // +X (derecha)
+    'skybox_nx.png', // -X (izquierda)
+    'skybox_py.png', // +Y (arriba)
+    'skybox_ny.png', // -Y (abajo)
+    'skybox_pz.png', // +Z (frontal)
+    'skybox_nz.png'  // -Z (trasero)
+]);
+scene.background = skybox;
+
+const ambientLight = new THREE.AmbientLight(0xffffff, 4);
+scene.add(ambientLight);
+const directionalLight = new THREE.DirectionalLight(0xffffff, 2);
+directionalLight.position.set(5, 10, 5);
+scene.add(directionalLight);
+
+const groundGeometry = new THREE.PlaneGeometry(100, 100);
+const textureLoaderGround = new THREE.TextureLoader();
+const groundTexture = textureLoaderGround.load('groundtexture.jpg');
+groundTexture.wrapS = THREE.RepeatWrapping;
+groundTexture.wrapT = THREE.RepeatWrapping;
+groundTexture.repeat.set(6, 6);
+
+const groundMaterial = new THREE.MeshStandardMaterial({
+    map: groundTexture,
+    roughness: 1,  // Ajusta según necesidad (0-1)
+    metalness: 0   // Ajusta según necesidad (0-1)
+});
+
+const ground = new THREE.Mesh(groundGeometry, groundMaterial);
+ground.rotation.x = -Math.PI / 2;
+scene.add(ground);
+
+// Crear el efecto de luz para el muzzle flash
+const muzzleFlashLight = new THREE.PointLight(0xffaa33, 2, 5); // Color naranja-amarillo, intensidad 2, distancia 5
+muzzleFlashLight.visible = false;
+muzzleFlashLight.castShadow = true; // Opcional: proyecta sombras
+
+// Opcional: Añadir un sprite para el destello
+const textureLoader = new THREE.TextureLoader();
+const flashSprite = textureLoader.load(
+    'https://threejs.org/examples/textures/sprites/disc.png',
+    () => console.log('Sprite de destello cargado'),
+    undefined,
+    (err) => console.error('Error cargando sprite:', err)
+);
+const muzzleFlashSprite = new THREE.Sprite(
+    new THREE.SpriteMaterial({
+        map: flashSprite,
+        color: 0xffaa33,
+        transparent: true,
+        blending: THREE.AdditiveBlending,
+    })
+);
+muzzleFlashSprite.scale.set(0.1, 0.1, 0.1);
+muzzleFlashSprite.visible = false;
+
+const loader = new THREE.GLTFLoader();
+let weapon;
+loader.load(
+    'mp5sd.glb',
+    (gltf) => {
+        weapon = gltf.scene;
+        weapon.position.set(0.5, -0.5, -2);
+        weapon.rotation.set(0, Math.PI, 0);
+        weapon.scale.set(5, 5, 5);
+        weapon.add(muzzleFlashLight); // Añadir la luz al arma
+        weapon.add(muzzleFlashSprite); // Añadir el sprite al arma
+        camera.add(weapon);
+    },
+    undefined,
+    (error) => {
+        console.error('Error al cargar el modelo:', error);
+    }
+);
+
+let velocity = new THREE.Vector3();
+let moveForward = false, moveBackward = false, moveLeft = false, moveRight = false;
+const speed = 0.1;
+
+// Variables para el salto
+let isJumping = false;
+let velocityY = 0;
+const gravity = 0.015;
+const jumpStrength = 0.3;
+const groundLevel = 5;
+
+const targets = [];
+function spawnTarget() {
+    const geometry = new THREE.BoxGeometry(1, 1, 1);
+    const material = new THREE.MeshBasicMaterial({ color: Math.random() * 0xffffff });
+    const cube = new THREE.Mesh(geometry, material);
+    cube.position.set(Math.random() * 50 - 25, 0.5, Math.random() * 50 - 25);
+    scene.add(cube);
+    targets.push(cube);
+}
+
+for (let i = 0; i < 10; i++) spawnTarget();
+
+document.addEventListener('keydown', (e) => {
+    switch (e.code) {
+        case 'KeyW': moveForward = true; break;
+        case 'KeyS': moveBackward = true; break;
+        case 'KeyA': moveLeft = true; break;
+        case 'KeyD': moveRight = true; break;
+        case 'Space':
+            // Saltar solo si está en el suelo
+            if (!isJumping && camera.position.y <= groundLevel) {
+                isJumping = true;
+                velocityY = jumpStrength;
+            }
+            break;
+    }
+});
+
+document.addEventListener('keyup', (e) => {
+    switch (e.code) {
+        case 'KeyW': moveForward = false; break;
+        case 'KeyS': moveBackward = false; break;
+        case 'KeyA': moveLeft = false; break;
+        case 'KeyD': moveRight = false; break;
+    }
+});
+
+// Variable para controlar el disparo automático
+let isShooting = false;
+let lastShotTime = 0;
+const fireRate = 100; // Milisegundos entre disparos (100ms = 10 disparos por segundo)
+
+document.addEventListener('click', () => {
+    if (!document.pointerLockElement) {
+        renderer.domElement.requestPointerLock();
+    }
+});
+
+// Click izquierdo para disparar (mousedown)
+document.addEventListener('mousedown', (e) => {
+    // Solo click izquierdo (button 0)
+    if (e.button === 0 && document.pointerLockElement) {
+        isShooting = true;
+    }
+});
+
+// Dejar de disparar (mouseup)
+document.addEventListener('mouseup', (e) => {
+    if (e.button === 0) {
+        isShooting = false;
+    }
+});
+
+// Prevenir el menú contextual del click derecho
+document.addEventListener('contextmenu', (e) => {
+    e.preventDefault();
+});
+
+document.addEventListener('pointerlockchange', () => {
+    console.log('Pointer Lock:', document.pointerLockElement ? 'Activado' : 'Desactivado');
+});
+
+document.addEventListener('mousemove', (e) => {
+    if (document.pointerLockElement) {
+        const movementX = e.movementX || 0;
+        const movementY = e.movementY || 0;
+        const euler = new THREE.Euler(0, 0, 0, 'YXZ');
+        euler.setFromQuaternion(camera.quaternion);
+        euler.y -= movementX * 0.002;
+        euler.x -= movementY * 0.002;
+        euler.x = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, euler.x));
+        camera.quaternion.setFromEuler(euler);
+    }
+});
+
+const listener = new THREE.AudioListener();
+camera.add(listener);
+
+const gunSound = new THREE.Audio(listener);
+const audioLoader = new THREE.AudioLoader();
+audioLoader.load('mp5_01.wav', (buffer) => {
+    gunSound.setBuffer(buffer);
+    gunSound.setLoop(false);
+    gunSound.setVolume(1);
+});
+
+document.body.addEventListener('click', () => {
+    gunSound.play();
+    gunSound.stop();
+}, { once: true });
+
+function shoot() {
+    if (!weapon) return;
+
+    // Raycast para detectar objetivos
+    const raycaster = new THREE.Raycaster();
+    raycaster.setFromCamera(new THREE.Vector2(0, 0), camera);
+    const intersects = raycaster.intersectObjects(targets);
+    if (intersects.length > 0) {
+        const target = intersects[0].object;
+        scene.remove(target);
+        targets.splice(targets.indexOf(target), 1);
+        spawnTarget();
+    }
+
+    if (gunSound.isPlaying) gunSound.stop();
+    gunSound.play();
+
+    // Posicionar y activar el destello
+    muzzleFlashLight.position.set(-0.005, -0.025, 0.4); // Ajusta según el modelo
+    muzzleFlashSprite.position.set(-0.005, -0.025, 0.4);
+    muzzleFlashLight.visible = true;
+    muzzleFlashSprite.visible = true;
+    muzzleFlashSprite.lookAt(camera.getWorldPosition(new THREE.Vector3()));
+
+    // Apagar después de 30ms
+    setTimeout(() => {
+        muzzleFlashLight.visible = false;
+        muzzleFlashSprite.visible = false;
+    }, 30);
+}
+
+let time = 0; // Tiempo acumulado
+let idleWeaponMovement = 0.01; // Intensidad del balanceo
+let idleWeaponSpeed = 1; // Velocidad del balanceo
+
+function animate() {
+    requestAnimationFrame(animate);
+
+    // Disparo automático
+    const currentTime = Date.now();
+    if (isShooting && document.pointerLockElement && currentTime - lastShotTime >= fireRate) {
+        shoot();
+        lastShotTime = currentTime;
+    }
+
+    // Simulación del movimiento con amortiguación
+    velocity.x -= velocity.x * 10.0 * 0.016;
+    velocity.z -= velocity.z * 10.0 * 0.016;
+
+    const cameraDirection = new THREE.Vector3();
+    camera.getWorldDirection(cameraDirection);
+    cameraDirection.y = 0;
+    cameraDirection.normalize();
+
+    const rightDirection = new THREE.Vector3();
+    rightDirection.crossVectors(cameraDirection, new THREE.Vector3(0, 1, 0)).normalize();
+
+    const moveDirection = new THREE.Vector3();
+    if (moveForward) moveDirection.add(cameraDirection);
+    if (moveBackward) moveDirection.sub(cameraDirection);
+    if (moveRight) moveDirection.add(rightDirection);
+    if (moveLeft) moveDirection.sub(rightDirection);
+
+    if (moveForward || moveBackward || moveLeft || moveRight) {
+        moveDirection.normalize();
+        velocity.x += moveDirection.x * speed;
+        velocity.z += moveDirection.z * speed;
+    }
+
+    camera.position.x += velocity.x;
+    camera.position.z += velocity.z;
+
+    // Física del salto
+    if (isJumping) {
+        velocityY -= gravity;
+        camera.position.y += velocityY;
+
+        // Verificar si ha tocado el suelo
+        if (camera.position.y <= groundLevel) {
+            camera.position.y = groundLevel;
+            isJumping = false;
+            velocityY = 0;
+        }
+    } else {
+        // Asegurar que la cámara no caiga por debajo del suelo
+        if (camera.position.y < groundLevel) {
+            camera.position.y = groundLevel;
+        }
+    }
+
+    // Balanceo del arma si el jugador está quieto
+    if (!moveForward && !moveBackward && !moveLeft && !moveRight) {
+        time += 0.016; // Simula el tiempo en cada frame (aprox. 60 FPS)
+
+        if (weapon) {
+            weapon.position.x = 0.5 + Math.sin(time * idleWeaponSpeed) * idleWeaponMovement;
+            weapon.position.y = -0.5 + Math.sin(time * idleWeaponSpeed * 0.5) * idleWeaponMovement;
+        }
+    }
+
+    renderer.render(scene, camera);
+}
+animate();
+
+window.addEventListener('resize', () => {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+});
+
+    </script>
+</body>
+</html>
