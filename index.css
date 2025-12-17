@@ -112,8 +112,7 @@ main {
   margin-right: auto;
   position: relative;
   z-index: 1;
-  background: #080d1a;
-  isolation: isolate;
+  background: rgba(8, 13, 26, 0.95); /* Fondo semi-opaco */
 }
 
 /* Secciones con diseño tech futurista */
