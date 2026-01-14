@@ -14,12 +14,12 @@ scene.add(camera);
 
 const loadersky = new THREE.CubeTextureLoader();
 const skybox = loadersky.load([
-    '/staticfiles_game/skybox_px.png', // +X (derecha)
-    '/staticfiles_game/skybox_nx.png', // -X (izquierda)
-    '/staticfiles_game/skybox_py.png', // +Y (arriba)
-    '/staticfiles_game/skybox_ny.png', // -Y (abajo)
-    '/staticfiles_game/skybox_pz.png', // +Z (frontal)
-    '/staticfiles_game/skybox_nz.png'  // -Z (trasero)
+    '../staticfiles_game/skybox_px.png', // +X (derecha)
+    '../staticfiles_game/skybox_nx.png', // -X (izquierda)
+    '../staticfiles_game/skybox_py.png', // +Y (arriba)
+    '../staticfiles_game/skybox_ny.png', // -Y (abajo)
+    '../staticfiles_game/skybox_pz.png', // +Z (frontal)
+    '../staticfiles_game/skybox_nz.png'  // -Z (trasero)
 ]);
 scene.background = skybox;
 
@@ -31,7 +31,7 @@ scene.add(directionalLight);
 
 const groundGeometry = new THREE.PlaneGeometry(100, 100);
 const textureLoaderGround = new THREE.TextureLoader();
-const groundTexture = textureLoaderGround.load('/staticfiles_game/groundtexture.jpg');
+const groundTexture = textureLoaderGround.load('../staticfiles_game/groundtexture.jpg');
 groundTexture.wrapS = THREE.RepeatWrapping;
 groundTexture.wrapT = THREE.RepeatWrapping;
 groundTexture.repeat.set(6, 6);
@@ -73,7 +73,7 @@ muzzleFlashSprite.visible = false;
 const loader = new THREE.GLTFLoader();
 let weapon;
 loader.load(
-    '/staticfiles_game/mp5sd.glb',
+    '../staticfiles_game/mp5sd.glb',
     (gltf) => {
         weapon = gltf.scene;
         weapon.position.set(0.5, -0.5, -2);
