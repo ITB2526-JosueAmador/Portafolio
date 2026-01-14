@@ -1,7 +1,7 @@
 # Josué Amador – Portafolio Creativo & Técnico
 
 <p align="center">
-  <img src="https://via.placeholder.com/1200x400/0f172a/60a5fa?text=Josué+Amador+Portfolio" alt="Portfolio Banner" width="100%"/>
+  <img src="https://itunes.apple.com/app/apple-store/id917932200?pt=39040802&ct=Media1GIFV2&mt=8" alt="Portfolio Banner" width="100%"/>
 </p>
 
 <p align="center">
